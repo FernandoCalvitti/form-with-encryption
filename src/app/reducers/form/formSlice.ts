@@ -1,45 +1,22 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { initialData } from "../../../constants/constants";
 
 const initialState = {
-  formData: {
-    firstName: "",
-    lastName: "",
-    birtDate: "",
-    phone: "",
-    address: "",
-    zip: "",
-    city: "",
-    state: "",
-    companyName: "",
-    companyCreationDate: "",
-    companyAddress: "",
-    companyCity: "",
-    companyState: "",
-    companyZip: "",
-    companyPhone: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    files: {
-      file: null,
-      fileName: "",
-      fileType: "",
-      fileSize: 0,
-    },
-  },
+  formData: initialData,
 };
 
 export const formSlice = createSlice({
   name: "form",
   initialState,
   reducers: {
-    setFormData: (state, action) => {
+    setNewFormData: (state, action: any) => {
+      console.log(action.payload);
       state.formData = action.payload;
     },
     encryptFormData: (state, action) => {},
   },
 });
 
-export const { setFormData, encryptFormData } = formSlice.actions;
+export const { setNewFormData, encryptFormData } = formSlice.actions;
 
 export default formSlice.reducer;

@@ -1,4 +1,7 @@
+import { Button } from "@mui/material";
 import React, { useCallback, useState } from "react";
+import { useDispatch } from "react-redux";
+import { setNewFormData } from "../../app/reducers/form/formSlice";
 import { initialData, inputs } from "../../constants/constants";
 import { FormData } from "../../Types/FormData";
 import Input from "../Input";
@@ -31,8 +34,10 @@ const Form = (props: Props) => {
     []
   );
 
-  const handleSubmit = (event: React.SyntheticEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const dispatch = useDispatch();
+
+  const handleSubmit = () => {
+    dispatch(setNewFormData(formData as any));
   };
 
   console.log(formData);
@@ -46,6 +51,7 @@ const Form = (props: Props) => {
           {...input}
         />
       ))}
+      <Button onClick={() => handleSubmit()}>Almacenar en redux</Button>
     </form>
   );
 };
