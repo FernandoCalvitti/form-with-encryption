@@ -10,7 +10,6 @@ export const formSlice = createSlice({
   initialState,
   reducers: {
     setNewFormData: (state, action: any) => {
-      console.log(action.payload);
       state.formData = action.payload;
     },
     encryptFormData: (state, action) => {},

@@ -3,36 +3,43 @@ import React, { useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
 import { setNewFormData } from "../../app/reducers/form/formSlice";
 import { initialData, inputs } from "../../constants/constants";
-import { FormData } from "../../Types/FormData";
+import { FormDataI } from "../../Types/FormData";
 import Input from "../Input";
 
 type Props = {};
 
 const Form = (props: Props) => {
-  const [formData, setFormData] = useState<FormData>(initialData);
+  const [formData, setFormData] = useState<FormDataI>(initialData);
+  const [files, setFiles] = useState<FormData[]>([]);
 
-  const updateValueCallback = useCallback(
+  const handleFormValueChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       event.preventDefault();
       event.persist();
       setFormData((prevFormData: any) => {
         let fieldId = event.target.name;
-        if (fieldId === "files") {
-          if (!event.target.files) {
-            return;
-          }
-          const newFile = event.target.files[0];
-          return { ...prevFormData, files: [...prevFormData.files, newFile] };
-        } else {
-          return {
-            ...prevFormData,
-            [fieldId]: event.target.value,
-          };
-        }
+
+        return {
+          ...prevFormData,
+          [fieldId]: event.target.value,
+        };
       });
     },
     []
   );
+
+  const handleFileUpload = (e: any) => {
+    const file = e.target.files[0];
+    const formattedFile = formatFile(file);
+    setFiles([...files, formattedFile]);
+    console.log(files);
+  };
+
+  const formatFile = (file: File) => {
+    const data = new FormData();
+    data.append(file.name, file, file.name);
+    return data;
+  };
 
   const dispatch = useDispatch();
 
@@ -47,7 +54,9 @@ const Form = (props: Props) => {
         <Input
           key={input.id}
           value={formData[input.name as keyof typeof initialData]}
-          handleChange={updateValueCallback}
+          handleChange={
+            input.name !== "files" ? handleFormValueChange : handleFileUpload
+          }
           {...input}
         />
       ))}

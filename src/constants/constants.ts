@@ -17,7 +17,6 @@ export const initialData = {
   email: "",
   password: "",
   confirmPassword: "",
-  files: [],
 };
 
 export const inputs = [

@@ -1,4 +1,4 @@
-export interface FormData {
+export interface FormDataI {
   firstName: string;
   lastName: string;
   birthDate: string;
@@ -17,7 +17,6 @@ export interface FormData {
   email: string;
   password: string;
   confirmPassword: string;
-  files: File[] | [];
 }
 
 export interface Input {
