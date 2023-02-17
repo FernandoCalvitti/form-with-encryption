@@ -171,6 +171,5 @@ export const inputs = [
     label: "Files",
     type: "file",
     placeholder: "Files",
-    required: true,
   },
 ];
