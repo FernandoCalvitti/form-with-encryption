@@ -9,7 +9,16 @@ const Form = (props: Props) => {
   const [formData, setFormData] = useState<FormData>(initialData);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [event.target.name]: event.target.value });
+    if (event.target.name === "files") {
+      if (!event.target.files) {
+        return;
+      }
+      const file = event.target.files[0];
+      let files = [...formData.files, file];
+      setFormData({ ...formData, files: files });
+    } else {
+      setFormData({ ...formData, [event.target.name]: event.target.value });
+    }
   };
 
   const handleSubmit = (event: React.SyntheticEvent<HTMLFormElement>) => {

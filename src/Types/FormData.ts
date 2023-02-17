@@ -17,12 +17,7 @@ export interface FormData {
   email: string;
   password: string;
   confirmPassword: string;
-  files: {
-    file: null | {};
-    fileName: string;
-    fileType: string;
-    fileSize: number;
-  };
+  files: File[] | [];
 }
 
 export interface Input {

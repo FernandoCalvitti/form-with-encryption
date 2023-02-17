@@ -17,12 +17,7 @@ export const initialData = {
   email: "",
   password: "",
   confirmPassword: "",
-  files: {
-    file: null,
-    fileName: "",
-    fileType: "",
-    fileSize: 0,
-  },
+  files: [],
 };
 
 export const inputs = [
