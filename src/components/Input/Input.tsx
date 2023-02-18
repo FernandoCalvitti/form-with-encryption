@@ -13,7 +13,6 @@ type Props = {
 const Input: React.FC<Props> = (props) => {
   const { placeholder, label, id, value, handleChange, ...input } = props;
 
-  console.log("register: ", label);
   return (
     <Box m={4}>
       <TextField

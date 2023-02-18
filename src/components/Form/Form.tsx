@@ -4,13 +4,14 @@ import { useDispatch } from "react-redux";
 import { setNewFormData } from "../../app/reducers/form/formSlice";
 import { initialData, inputs } from "../../constants/constants";
 import { FormDataI } from "../../Types/FormData";
+import FilesList from "../FilesList";
 import Input from "../Input";
 
 type Props = {};
 
 const Form = (props: Props) => {
   const [formData, setFormData] = useState<FormDataI>(initialData);
-  const [files, setFiles] = useState<FormData[]>([]);
+  const [files, setFiles] = useState<File[]>([]);
 
   const handleFormValueChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,12 +29,22 @@ const Form = (props: Props) => {
     []
   );
 
-  const handleFileUpload = (e: any) => {
-    const file = e.target.files[0];
-    const formattedFile = formatFile(file);
-    setFiles([...files, formattedFile]);
-    console.log(files);
-  };
+  const handleFileUpload = useCallback(
+    (e: any) => {
+      e.preventDefault();
+      const file = e.target.files[0];
+      /*  const formattedFile = formatFile(file); */ // Para formatear files
+      const repeated = files.some((item) => item.name === file.name);
+      if (repeated) {
+        return;
+      } else {
+        setFiles((prevFiles: any) => {
+          return [...prevFiles, file];
+        });
+      }
+    },
+    [files]
+  );
 
   const formatFile = (file: File) => {
     const data = new FormData();
@@ -47,7 +58,12 @@ const Form = (props: Props) => {
     dispatch(setNewFormData(formData as any));
   };
 
-  console.log(formData);
+  const handleRemoveFile = (filename: string) => {
+    setFiles((prevFiles: any) => {
+      return prevFiles.filter((file: File) => file.name !== filename);
+    });
+  };
+
   return (
     <form>
       {inputs.map((input: any) => (
@@ -60,7 +76,17 @@ const Form = (props: Props) => {
           {...input}
         />
       ))}
-      <Button onClick={() => handleSubmit()}>Almacenar en redux</Button>
+      <FilesList files={files} handlerRemove={handleRemoveFile} />
+      <Button
+        sx={{
+          m: 4,
+          p: 4,
+        }}
+        variant="contained"
+        onClick={() => handleSubmit()}
+      >
+        Submit
+      </Button>
     </form>
   );
 };
