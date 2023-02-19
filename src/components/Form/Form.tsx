@@ -1,17 +1,19 @@
 import { Button } from "@mui/material";
 import React, { useCallback, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setNewFormData } from "../../app/reducers/form/formSlice";
 import { initialData, inputs } from "../../constants/constants";
 import { FormDataI } from "../../Types/FormData";
 import FilesList from "../FilesList";
 import Input from "../Input";
+import axios from "axios";
 
 type Props = {};
 
 const Form = (props: Props) => {
   const [formData, setFormData] = useState<FormDataI>(initialData);
   const [files, setFiles] = useState<File[]>([]);
+  const stateFromStore = useSelector((state: any) => state.form.formData);
 
   const handleFormValueChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -29,39 +31,61 @@ const Form = (props: Props) => {
     []
   );
 
-  const handleFileUpload = useCallback(
-    (e: any) => {
-      e.preventDefault();
-      const file = e.target.files[0];
-      /*  const formattedFile = formatFile(file); */ // Para formatear files
-      const repeated = files.some((item) => item.name === file.name);
-      if (repeated) {
-        return;
-      } else {
-        setFiles((prevFiles: any) => {
-          return [...prevFiles, file];
-        });
-      }
+  const handleUploadFiles = useCallback(
+    (filesToUpload: any) => {
+      const uploaded = [...files];
+      filesToUpload.some((file: any) => {
+        if (uploaded.findIndex((f: any) => f.name === file.name) === -1) {
+          uploaded.push(file);
+        }
+      });
+      setFiles(uploaded);
     },
     [files]
   );
 
-  const formatFile = (file: File) => {
-    const data = new FormData();
-    data.append(file.name, file, file.name);
-    return data;
-  };
+  const handleFileEvent = useCallback(
+    (e: any) => {
+      e.preventDefault();
+      const filesSelected = Array.prototype.slice.call(e.target.files);
+      handleUploadFiles(filesSelected);
+    },
+    [handleUploadFiles]
+  );
 
   const dispatch = useDispatch();
 
   const handleSubmit = () => {
     dispatch(setNewFormData(formData as any));
+    sendDataToServer();
   };
 
   const handleRemoveFile = (filename: string) => {
     setFiles((prevFiles: any) => {
       return prevFiles.filter((file: File) => file.name !== filename);
     });
+  };
+
+  const sendDataToServer = async () => {
+    const URL = "https://v2.convertapi.com/upload";
+
+    const data = new FormData();
+
+    for (let i = 0; i < files.length; i++) {
+      data.append(files[i].name, files[i]);
+    }
+
+    const BODY = {
+      files: [...data],
+      formData: { ...stateFromStore },
+    };
+
+    try {
+      const response = await axios.post(URL, BODY);
+      console.log("response: ", response);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -71,7 +95,7 @@ const Form = (props: Props) => {
           key={input.id}
           value={formData[input.name as keyof typeof initialData]}
           handleChange={
-            input.name !== "files" ? handleFormValueChange : handleFileUpload
+            input.name !== "files" ? handleFormValueChange : handleFileEvent
           }
           {...input}
         />

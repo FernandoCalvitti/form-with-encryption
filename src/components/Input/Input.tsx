@@ -20,6 +20,7 @@ const Input: React.FC<Props> = (props) => {
         {...input}
         onChange={handleChange}
         variant={"outlined"}
+        inputProps={label === "Files" ? { multiple: true } : {}}
       />
     </Box>
   );
