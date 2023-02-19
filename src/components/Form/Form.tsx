@@ -7,6 +7,7 @@ import { FormDataI } from "../../Types/FormData";
 import FilesList from "../FilesList";
 import Input from "../Input";
 import axios from "axios";
+import encryptFiles from "../../helpers/encryptFiles";
 
 type Props = {};
 
@@ -75,14 +76,37 @@ const Form = (props: Props) => {
       data.append(files[i].name, files[i]);
     }
 
+    // Encript with object
+    /* let newData: any = [...data].map((p: any) => p[1]);
+
+    newData = newData.map((file: any) => {
+      return {
+        name: file.name,
+        lastModified: file.lastModified,
+        size: file.size,
+        type: file.type,
+      };
+    });
+
+    console.log(newData); */
+    const key = "Clave";
+
+    encryptFiles(files, key)
+      .then((encryptedFiles) => {
+        console.log(encryptedFiles);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+
     const BODY = {
       files: [...data],
-      formData: { ...stateFromStore },
+      formData: stateFromStore,
     };
 
     try {
       const response = await axios.post(URL, BODY);
-      console.log("response: ", response);
+      /* console.log("response: ", response); */
     } catch (error) {
       console.log(error);
     }
