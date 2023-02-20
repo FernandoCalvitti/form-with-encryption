@@ -1,22 +1,24 @@
 export const initialData = {
-  firstName: "",
-  lastName: "",
-  birthDate: "",
-  phone: "",
-  address: "",
-  zip: "",
-  city: "",
-  state: "",
-  companyName: "",
-  companyCreationDate: "",
-  companyAddress: "",
-  companyCity: "",
-  companyState: "",
-  companyZip: "",
-  companyPhone: "",
-  email: "",
-  password: "",
-  confirmPassword: "",
+  formData: {
+    firstName: "",
+    lastName: "",
+    birthDate: "",
+    phone: "",
+    address: "",
+    zip: "",
+    city: "",
+    state: "",
+    companyName: "",
+    companyCreationDate: "",
+    companyAddress: "",
+    companyCity: "",
+    companyState: "",
+    companyZip: "",
+    companyPhone: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  },
   encryptFormData: [],
 };
 
@@ -173,3 +175,7 @@ export const inputs = [
     placeholder: "Files",
   },
 ];
+
+export const URL = "https://v2.convertapi.com/upload";
+
+export const SECRET_KEY = "Clave";

@@ -1,9 +1,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { initialData } from "../../../constants/constants";
 import encryptObjectWithFiles from "../../../helpers/encryptObjectWithFiles";
-import { FormDataI } from "../../../Types/FormData";
+import { FormDataI, FormState } from "../../../Types/FormData";
 
-const initialState: FormDataI = initialData;
+const initialState: FormState = initialData;
 
 export const formSlice = createSlice({
   name: "form",
@@ -14,7 +14,7 @@ export const formSlice = createSlice({
       action: PayloadAction<{ name: string; value: string }>
     ) => {
       const { name, value } = action.payload;
-      state[name] = value;
+      state.formData[name] = value;
     },
     encryptFormData: (
       state,

@@ -18,6 +18,10 @@ export interface FormDataI {
   email: string;
   password: string;
   confirmPassword: string;
+}
+
+export interface FormState {
+  formData: FormDataI;
   encryptFormData: string[];
 }
 

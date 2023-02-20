@@ -11,13 +11,13 @@ import Input from "../Input";
 import axios from "axios";
 import encryptFiles from "../../helpers/encryptFiles";
 import store from "../../app/store";
+import { SECRET_KEY, URL } from "../../constants/constants";
 
 type Props = {};
 
 const Form = (props: Props) => {
   const [files, setFiles] = useState<File[]>([]);
   const stateFromStore = useSelector((state: any) => state);
-  const dataEncrypted = useSelector((state: any) => state.form.encryptFormData);
   const dispatch = useDispatch();
 
   const handleFormValueChange = useCallback(
@@ -51,44 +51,40 @@ const Form = (props: Props) => {
     [handleUploadFiles]
   );
 
-  const handleSubmit = () => {
-    sendDataToServer();
-  };
-
-  const handleRemoveFile = (filename: string) => {
-    setFiles((prevFiles: any) => {
-      return prevFiles.filter((file: File) => file.name !== filename);
-    });
-  };
-
-  const sendDataToServer = async () => {
-    const URL = "https://v2.convertapi.com/upload";
-
-    const key = "Clave";
-    const filesEncrypted = await encryptFiles(files, key);
+  const handleSubmit = async () => {
+    const filesEncrypted = await encryptFiles(files, SECRET_KEY);
 
     dispatch(
       encryptFormData({
         form: stateFromStore,
-        key,
+        key: SECRET_KEY,
         files: filesEncrypted,
       })
     );
 
     const state = store.getState();
     const data = new FormData();
-    dataEncrypted.forEach((encryptedData: string, index: number) => {
-      data.append(`${encryptedData}_${index}`, encryptedData);
-    });
+
+    state.form.encryptFormData.forEach(
+      (encryptedData: string, index: number) => {
+        data.append(`${encryptedData}_${index}`, encryptedData);
+      }
+    );
+
     const BODY = data;
 
-    console.log("la data encryptada: ", state.form.encryptFormData);
     try {
       const response = await axios.post(URL, BODY);
       /* console.log("response: ", response); */
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleRemoveFile = (filename: string) => {
+    setFiles((prevFiles: any) => {
+      return prevFiles.filter((file: File) => file.name !== filename);
+    });
   };
 
   return (
