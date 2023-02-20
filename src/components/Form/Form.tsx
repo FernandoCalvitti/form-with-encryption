@@ -1,17 +1,12 @@
 import { Button } from "@mui/material";
 import React, { useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  encryptFormData,
-  updateField,
-} from "../../app/reducers/form/formSlice";
+import { updateField } from "../../app/reducers/form/formSlice";
 import { inputs } from "../../constants/constants";
 import FilesList from "../FilesList";
 import Input from "../Input";
-import axios from "axios";
-import encryptFiles from "../../helpers/encryptFiles";
-import store from "../../app/store";
-import { SECRET_KEY, URL } from "../../constants/constants";
+import { SECRET_KEY } from "../../constants/constants";
+import useHttp from "../../hooks/useHttp";
 
 type Props = {};
 
@@ -19,6 +14,7 @@ const Form = (props: Props) => {
   const [files, setFiles] = useState<File[]>([]);
   const stateFromStore = useSelector((state: any) => state);
   const dispatch = useDispatch();
+  const { loading, error, data, handleSubmit } = useHttp();
 
   const handleFormValueChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,36 +47,6 @@ const Form = (props: Props) => {
     [handleUploadFiles]
   );
 
-  const handleSubmit = async () => {
-    const filesEncrypted = await encryptFiles(files, SECRET_KEY);
-
-    dispatch(
-      encryptFormData({
-        form: stateFromStore,
-        key: SECRET_KEY,
-        files: filesEncrypted,
-      })
-    );
-
-    const state = store.getState();
-    const data = new FormData();
-
-    state.form.encryptFormData.forEach(
-      (encryptedData: string, index: number) => {
-        data.append(`${encryptedData}_${index}`, encryptedData);
-      }
-    );
-
-    const BODY = data;
-
-    try {
-      const response = await axios.post(URL, BODY);
-      /* console.log("response: ", response); */
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const handleRemoveFile = (filename: string) => {
     setFiles((prevFiles: any) => {
       return prevFiles.filter((file: File) => file.name !== filename);
@@ -106,7 +72,7 @@ const Form = (props: Props) => {
           p: 4,
         }}
         variant="contained"
-        onClick={() => handleSubmit()}
+        onClick={(e) => handleSubmit(e, stateFromStore, files, SECRET_KEY)}
       >
         Submit
       </Button>
