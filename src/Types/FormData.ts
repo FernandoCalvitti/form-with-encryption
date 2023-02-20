@@ -1,4 +1,5 @@
 export interface FormDataI {
+  [key: string]: string | string[];
   firstName: string;
   lastName: string;
   birthDate: string;
@@ -17,6 +18,7 @@ export interface FormDataI {
   email: string;
   password: string;
   confirmPassword: string;
+  encryptFormData: string[];
 }
 
 export interface Input {

@@ -1,35 +1,32 @@
 import { Button } from "@mui/material";
 import React, { useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setNewFormData } from "../../app/reducers/form/formSlice";
-import { initialData, inputs } from "../../constants/constants";
-import { FormDataI } from "../../Types/FormData";
+import {
+  encryptFormData,
+  updateField,
+} from "../../app/reducers/form/formSlice";
+import { inputs } from "../../constants/constants";
 import FilesList from "../FilesList";
 import Input from "../Input";
 import axios from "axios";
 import encryptFiles from "../../helpers/encryptFiles";
+import store from "../../app/store";
 
 type Props = {};
 
 const Form = (props: Props) => {
-  const [formData, setFormData] = useState<FormDataI>(initialData);
   const [files, setFiles] = useState<File[]>([]);
-  const stateFromStore = useSelector((state: any) => state.form.formData);
+  const stateFromStore = useSelector((state: any) => state);
+  const dataEncrypted = useSelector((state: any) => state.form.encryptFormData);
+  const dispatch = useDispatch();
 
   const handleFormValueChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
-      event.preventDefault();
-      event.persist();
-      setFormData((prevFormData: any) => {
-        let fieldId = event.target.name;
-
-        return {
-          ...prevFormData,
-          [fieldId]: event.target.value,
-        };
-      });
+      const name = event.target.name;
+      const value = event.target.value;
+      dispatch(updateField({ name, value }));
     },
-    []
+    [dispatch]
   );
 
   const handleUploadFiles = useCallback(
@@ -54,10 +51,7 @@ const Form = (props: Props) => {
     [handleUploadFiles]
   );
 
-  const dispatch = useDispatch();
-
   const handleSubmit = () => {
-    dispatch(setNewFormData(formData as any));
     sendDataToServer();
   };
 
@@ -70,40 +64,25 @@ const Form = (props: Props) => {
   const sendDataToServer = async () => {
     const URL = "https://v2.convertapi.com/upload";
 
-    const data = new FormData();
-
-    for (let i = 0; i < files.length; i++) {
-      data.append(files[i].name, files[i]);
-    }
-
-    // Encript with object
-    /* let newData: any = [...data].map((p: any) => p[1]);
-
-    newData = newData.map((file: any) => {
-      return {
-        name: file.name,
-        lastModified: file.lastModified,
-        size: file.size,
-        type: file.type,
-      };
-    });
-
-    console.log(newData); */
     const key = "Clave";
+    const filesEncrypted = await encryptFiles(files, key);
 
-    encryptFiles(files, key)
-      .then((encryptedFiles) => {
-        console.log(encryptedFiles);
+    dispatch(
+      encryptFormData({
+        form: stateFromStore,
+        key,
+        files: filesEncrypted,
       })
-      .catch((error) => {
-        console.error(error);
-      });
+    );
 
-    const BODY = {
-      files: [...data],
-      formData: stateFromStore,
-    };
+    const state = store.getState();
+    const data = new FormData();
+    dataEncrypted.forEach((encryptedData: string, index: number) => {
+      data.append(`${encryptedData}_${index}`, encryptedData);
+    });
+    const BODY = data;
 
+    console.log("la data encryptada: ", state.form.encryptFormData);
     try {
       const response = await axios.post(URL, BODY);
       /* console.log("response: ", response); */
@@ -117,7 +96,7 @@ const Form = (props: Props) => {
       {inputs.map((input: any) => (
         <Input
           key={input.id}
-          value={formData[input.name as keyof typeof initialData]}
+          value={stateFromStore[input.name]}
           handleChange={
             input.name !== "files" ? handleFormValueChange : handleFileEvent
           }

@@ -1,21 +1,35 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { initialData } from "../../../constants/constants";
+import encryptObjectWithFiles from "../../../helpers/encryptObjectWithFiles";
+import { FormDataI } from "../../../Types/FormData";
 
-const initialState = {
-  formData: initialData,
-};
+const initialState: FormDataI = initialData;
 
 export const formSlice = createSlice({
   name: "form",
   initialState,
   reducers: {
-    setNewFormData: (state, action: any) => {
-      state.formData = action.payload;
+    updateField: (
+      state,
+      action: PayloadAction<{ name: string; value: string }>
+    ) => {
+      const { name, value } = action.payload;
+      state[name] = value;
     },
-    encryptFormData: (state, action) => {},
+    encryptFormData: (
+      state,
+      action: PayloadAction<{
+        form: FormDataI;
+        key: string;
+        files: string[] | string;
+      }>
+    ) => {
+      const { form, key, files } = action.payload;
+      state.encryptFormData = encryptObjectWithFiles(form, key, files);
+    },
   },
 });
 
-export const { setNewFormData, encryptFormData } = formSlice.actions;
+export const { updateField, encryptFormData } = formSlice.actions;
 
 export default formSlice.reducer;

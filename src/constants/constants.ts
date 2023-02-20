@@ -17,6 +17,7 @@ export const initialData = {
   email: "",
   password: "",
   confirmPassword: "",
+  encryptFormData: [],
 };
 
 export const inputs = [
