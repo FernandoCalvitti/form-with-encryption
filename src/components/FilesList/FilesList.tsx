@@ -8,18 +8,31 @@ import {
   ListItemText,
 } from "@mui/material";
 
-import FolderIcon from "@mui/icons-material/Folder";
+import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 type Props = { files: File[]; handlerRemove: (name: string) => void };
 
 const FilesList: React.FC<Props> = ({ files, handlerRemove }) => {
   return (
-    <List>
+    <List
+      sx={{
+        width: "100%",
+        minWidth: "64px",
+        margin: "1rem auto",
+      }}
+    >
       {files.map((file: any, index) => {
         const { name, loading } = file;
         return (
           <ListItem
+            sx={{
+              maxWidth: "500px",
+              minWidth: "64px",
+              margin: "1rem auto",
+              width: "80%",
+              padding: "0 8px ",
+            }}
             key={`${index}${name}`}
             secondaryAction={
               <IconButton
@@ -33,10 +46,18 @@ const FilesList: React.FC<Props> = ({ files, handlerRemove }) => {
           >
             <ListItemAvatar>
               <Avatar>
-                <FolderIcon />
+                <CheckCircleRoundedIcon />
               </Avatar>
             </ListItemAvatar>
-            <ListItemText>{name}</ListItemText>
+            <ListItemText
+              sx={{
+                fontSize: "12px",
+                overflow: "hidden",
+                maxWidth: "60%",
+              }}
+            >
+              {name}
+            </ListItemText>
           </ListItem>
         );
       })}
