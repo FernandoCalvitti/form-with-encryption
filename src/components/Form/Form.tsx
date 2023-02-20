@@ -1,4 +1,4 @@
-import { Button } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import React, { useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { updateField } from "../../app/reducers/form/formSlice";
@@ -7,6 +7,7 @@ import FilesList from "../FilesList";
 import Input from "../Input";
 import { SECRET_KEY } from "../../constants/constants";
 import useHttp from "../../hooks/useHttp";
+import { Box } from "@mui/system";
 
 type Props = {};
 
@@ -54,29 +55,32 @@ const Form = (props: Props) => {
   };
 
   return (
-    <form>
-      {inputs.map((input: any) => (
-        <Input
-          key={input.id}
-          value={stateFromStore[input.name]}
-          handleChange={
-            input.name !== "files" ? handleFormValueChange : handleFileEvent
-          }
-          {...input}
-        />
-      ))}
-      <FilesList files={files} handlerRemove={handleRemoveFile} />
-      <Button
-        sx={{
-          m: 4,
-          p: 4,
-        }}
-        variant="contained"
-        onClick={(e) => handleSubmit(e, stateFromStore, files, SECRET_KEY)}
-      >
-        Submit
-      </Button>
-    </form>
+    <Box component={"main"}>
+      <Typography variant="h1" fontSize={48}>
+        Welcome to Random Inc.
+      </Typography>
+      <Typography variant="h5"> Complete the form </Typography>
+      <form>
+        {inputs.map((input: any) => (
+          <Input
+            key={input.id}
+            value={stateFromStore[input.name]}
+            handleChange={
+              input.name !== "files" ? handleFormValueChange : handleFileEvent
+            }
+            {...input}
+          />
+        ))}
+        <FilesList files={files} handlerRemove={handleRemoveFile} />
+        <Button
+          variant="contained"
+          size="large"
+          onClick={(e) => handleSubmit(e, stateFromStore, files, SECRET_KEY)}
+        >
+          Submit
+        </Button>
+      </form>
+    </Box>
   );
 };
 
