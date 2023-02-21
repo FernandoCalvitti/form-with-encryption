@@ -1,6 +1,6 @@
 import { Button, Stack, Typography } from "@mui/material";
-import React, { useCallback, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useCallback, useEffect, useState } from "react";
+import { useDispatch, useSelector, useStore } from "react-redux";
 import { updateField } from "../../app/reducers/form/formSlice";
 import { inputs } from "../../constants/constants";
 import FilesList from "../FilesList";
@@ -15,16 +15,30 @@ type Props = {};
 const Form = (props: Props) => {
   const [files, setFiles] = useState<File[]>([]);
   const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
-  const stateFromStore = useSelector((state: any) => state);
-  const dispatch = useDispatch();
+  const [canSubmit, setCanSubmit] = useState<boolean>(false);
+  const { getState, dispatch } = useStore<any>();
   const { loading, error, data, handleSubmit } = useHttp();
+
+  const stateFromStore = getState();
+
+  const requiredFields = inputs.filter((input) => input.required === true);
+  const checkRequiredFormValues = () => {
+    let allFieldsComplete = true;
+    for (const field of requiredFields) {
+      if (field.required) {
+        const fieldName = field.name;
+        if (!stateFromStore.form.formData[fieldName]) {
+          allFieldsComplete = false;
+        }
+      }
+    }
+    setCanSubmit(allFieldsComplete);
+  };
 
   const handleFormValueChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const name = event.target.name;
       const value = event.target.value;
-      console.log("nombre del campo: " + name);
-
       let error: string | null = null;
 
       switch (name) {
@@ -43,6 +57,7 @@ const Form = (props: Props) => {
             error = "Required field!";
           }
       }
+
       setErrors((errors) => ({ ...errors, [name]: error }));
 
       dispatch(updateField({ name, value }));
@@ -78,6 +93,10 @@ const Form = (props: Props) => {
     });
   };
 
+  useEffect(() => {
+    checkRequiredFormValues();
+  }, [stateFromStore.form.formData]);
+
   return (
     <Box
       component={"main"}
@@ -90,8 +109,8 @@ const Form = (props: Props) => {
       <form
         style={{
           margin: "2rem",
-          border: "1px solid grey",
           borderRadius: "2rem",
+          boxShadow: "10px 10px 20px 3px rgba(0,67,166,0.75)",
         }}
       >
         <Stack
@@ -138,6 +157,7 @@ const Form = (props: Props) => {
             marginBottom: "2rem",
           }}
           onClick={(e) => handleSubmit(e, stateFromStore, files, SECRET_KEY)}
+          disabled={!canSubmit ? true : false}
         >
           Register
         </Button>
