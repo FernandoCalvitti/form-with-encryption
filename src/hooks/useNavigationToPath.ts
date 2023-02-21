@@ -16,7 +16,6 @@ const useNavigationToPath = () => {
   return {
     handleNavigateToPath,
     loading,
-    setLoading,
   };
 };
 

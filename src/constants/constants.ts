@@ -48,7 +48,7 @@ export const inputs = [
     label: "Birth",
     type: "date",
     placeholder: "Birth",
-    required: true,
+    required: false,
   },
   {
     id: 4,
@@ -56,7 +56,7 @@ export const inputs = [
     label: "Phone",
     type: "text",
     placeholder: "Phone",
-    required: true,
+    required: false,
   },
   {
     id: 5,
@@ -104,7 +104,7 @@ export const inputs = [
     label: "Company Creation Date",
     type: "date",
     placeholder: "Company Creation Date",
-    required: true,
+    required: false,
   },
   {
     id: 11,
@@ -144,7 +144,7 @@ export const inputs = [
     label: "Company Phone",
     type: "text",
     placeholder: "Company Phone",
-    required: true,
+    required: false,
   },
   {
     id: 16,
@@ -152,7 +152,7 @@ export const inputs = [
     label: "Email",
     type: "email",
     placeholder: "Email",
-    required: true,
+    required: false,
   },
   {
     id: 17,
@@ -160,7 +160,7 @@ export const inputs = [
     label: "Password",
     type: "password",
     placeholder: "Password",
-    required: true,
+    required: false,
   },
   {
     id: 18,
@@ -168,7 +168,7 @@ export const inputs = [
     label: "Confirm Password",
     type: "password",
     placeholder: "Confirm Password",
-    required: true,
+    required: false,
   },
   {
     id: 19,

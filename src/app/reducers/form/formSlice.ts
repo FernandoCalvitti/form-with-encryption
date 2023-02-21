@@ -27,9 +27,13 @@ export const formSlice = createSlice({
       const { form, key, files } = action.payload;
       state.encryptFormData = encryptObjectWithFiles(form, key, files);
     },
+    resetForm: (state) => {
+      state.formData = initialData.formData;
+      state.encryptFormData = initialData.encryptFormData;
+    },
   },
 });
 
-export const { updateField, encryptFormData } = formSlice.actions;
+export const { updateField, encryptFormData, resetForm } = formSlice.actions;
 
 export default formSlice.reducer;

@@ -1,15 +1,17 @@
-import {
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  Typography,
-} from "@mui/material";
-import React from "react";
+import { Card, CardContent, Typography } from "@mui/material";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { resetForm } from "../../app/reducers/form/formSlice";
 
 type Props = {};
 
 const Result = (props: Props) => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(resetForm());
+  });
+
   return (
     <Card
       sx={{
