@@ -1,9 +1,9 @@
-import "./App.css";
-import Form from "./components/Form";
-
 import { Routes, Route } from "react-router-dom";
-import { HOME, RESULT } from "./constants/constants";
+import { HOME, RESULT } from "./config/Routes";
+import Form from "./components/Form";
 import Result from "./components/Result";
+
+import "./App.css";
 
 function App() {
   return (

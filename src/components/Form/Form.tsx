@@ -1,16 +1,17 @@
-import { Button, Stack, Typography } from "@mui/material";
 import React, { useCallback, useEffect, useState } from "react";
 import { useStore } from "react-redux";
 import { updateField } from "../../app/reducers/form/formSlice";
-import { inputs, RESULT } from "../../constants/constants";
-import FilesList from "../FilesList";
-import Input from "../Input";
-import { SECRET_KEY } from "../../constants/constants";
-import useHttp from "../../hooks/useHttp";
+import { inputs, SECRET_KEY } from "../../constants/constants";
+import { Button, Stack, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import SaveIcon from "@mui/icons-material/Save";
-import useNavigationToPath from "../../hooks/useNavigationToPath";
+import FilesList from "../FilesList";
+import Input from "../Input";
 import Loading from "../Loading";
+
+import useHttp from "../../hooks/useHttp";
+import useNavigationToPath from "../../hooks/useNavigationToPath";
+import { RESULT } from "../../config/Routes";
 
 type Props = {};
 

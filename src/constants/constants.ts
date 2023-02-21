@@ -1,6 +1,3 @@
-export const HOME = "/";
-export const RESULT = "/result";
-
 export const initialData = {
   formData: {
     firstName: "",
@@ -178,7 +175,5 @@ export const inputs = [
     placeholder: "Files",
   },
 ];
-
-export const URL = "https://v2.convertapi.com/upload";
 
 export const SECRET_KEY = "Clave";
