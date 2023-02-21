@@ -1,14 +1,16 @@
 import { Button, Stack, Typography } from "@mui/material";
 import React, { useCallback, useEffect, useState } from "react";
-import { useDispatch, useSelector, useStore } from "react-redux";
+import { useStore } from "react-redux";
 import { updateField } from "../../app/reducers/form/formSlice";
-import { inputs } from "../../constants/constants";
+import { inputs, RESULT } from "../../constants/constants";
 import FilesList from "../FilesList";
 import Input from "../Input";
 import { SECRET_KEY } from "../../constants/constants";
 import useHttp from "../../hooks/useHttp";
 import { Box } from "@mui/system";
 import SaveIcon from "@mui/icons-material/Save";
+import useNavigationToPath from "../../hooks/useNavigationToPath";
+import Loading from "../Loading";
 
 type Props = {};
 
@@ -17,11 +19,12 @@ const Form = (props: Props) => {
   const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
   const [canSubmit, setCanSubmit] = useState<boolean>(false);
   const { getState, dispatch } = useStore<any>();
-  const { loading, error, data, handleSubmit } = useHttp();
+  const { handleSubmit } = useHttp();
+  const { handleNavigateToPath, loading } = useNavigationToPath();
 
   const stateFromStore = getState();
-
   const requiredFields = inputs.filter((input) => input.required === true);
+
   const checkRequiredFormValues = () => {
     let allFieldsComplete = true;
     for (const field of requiredFields) {
@@ -41,6 +44,7 @@ const Form = (props: Props) => {
       const value = event.target.value;
       let error: string | null = null;
 
+      //Validation for errors
       switch (name) {
         case "firstName":
         case "lastName":
@@ -59,7 +63,6 @@ const Form = (props: Props) => {
       }
 
       setErrors((errors) => ({ ...errors, [name]: error }));
-
       dispatch(updateField({ name, value }));
     },
     [dispatch]
@@ -78,14 +81,11 @@ const Form = (props: Props) => {
     [files]
   );
 
-  const handleFileEvent = useCallback(
-    (e: any) => {
-      e.preventDefault();
-      const filesSelected = Array.prototype.slice.call(e.target.files);
-      handleUploadFiles(filesSelected);
-    },
-    [handleUploadFiles]
-  );
+  const handleFileEvent = (e: any) => {
+    e.preventDefault();
+    const filesSelected = Array.prototype.slice.call(e.target.files);
+    handleUploadFiles(filesSelected);
+  };
 
   const handleRemoveFile = (filename: string) => {
     setFiles((prevFiles: any) => {
@@ -106,62 +106,69 @@ const Form = (props: Props) => {
       justifyContent="center"
       alignItems={"center"}
     >
-      <form
-        style={{
-          margin: "2rem",
-          borderRadius: "2rem",
-          boxShadow: "10px 10px 20px 3px rgba(0,67,166,0.75)",
-        }}
-      >
-        <Stack
-          sx={{
-            boxShadow: 3,
-            borderTopLeftRadius: "2rem",
-            borderTopRightRadius: "2rem",
-            padding: "1rem",
-            background:
-              "linear-gradient(90deg, rgba(106,103,164,1) 0%, rgba(0,84,101,1) 100%)",
-            color: "white",
+      {loading ? (
+        <Loading />
+      ) : (
+        <form
+          style={{
+            margin: "2rem",
+            borderRadius: "2rem",
+            boxShadow: "10px 10px 20px 3px rgba(0,67,166,0.75)",
           }}
         >
-          <Typography variant="h1" fontSize={36} m={"1rem"}>
-            Welcome to Random Inc.
-          </Typography>
-          <Typography variant="h2" fontSize={16}>
-            Complete the form, (*) fields are required.
-          </Typography>
-        </Stack>
-        {inputs.map((input: any) => (
-          <Input
-            key={input.id}
-            value={stateFromStore[input.name]}
-            handleChange={
-              input.name !== "files" ? handleFormValueChange : handleFileEvent
-            }
-            error={!!errors[input.name] || undefined}
-            helperText={errors[input.name] || null}
-            {...input}
-          />
-        ))}
-        <FilesList files={files} handlerRemove={handleRemoveFile} />
-        <Button
-          size="large"
-          variant="contained"
-          endIcon={<SaveIcon />}
-          sx={{
-            maxWidth: "100%",
-            width: "236px",
-            height: "56px",
-            background:
-              "linear-gradient(90deg, rgba(106,103,164,1) 0%, rgba(0,84,101,1) 100%)",
-            marginBottom: "2rem",
-          }}
-          onClick={(e) => handleSubmit(e, stateFromStore, files, SECRET_KEY)}
-          disabled={!canSubmit ? true : false}
-        >
-          Register
-        </Button>
-      </form>
+          <Stack
+            sx={{
+              boxShadow: 3,
+              borderTopLeftRadius: "2rem",
+              borderTopRightRadius: "2rem",
+              padding: "1rem",
+              background:
+                "linear-gradient(90deg, rgba(106,103,164,1) 0%, rgba(0,84,101,1) 100%)",
+              color: "white",
+            }}
+          >
+            <Typography variant="h1" fontSize={36} m={"1rem"}>
+              Welcome to Random Inc.
+            </Typography>
+            <Typography variant="h2" fontSize={16}>
+              Complete the form, (*) fields are required.
+            </Typography>
+          </Stack>
+          {inputs.map((input: any) => (
+            <Input
+              key={input.id}
+              value={stateFromStore[input.name]}
+              handleChange={
+                input.name !== "files" ? handleFormValueChange : handleFileEvent
+              }
+              error={!!errors[input.name] || undefined}
+              helperText={errors[input.name] || null}
+              {...input}
+            />
+          ))}
+          <FilesList files={files} handlerRemove={handleRemoveFile} />
+          <Button
+            size="large"
+            variant="contained"
+            endIcon={<SaveIcon />}
+            sx={{
+              maxWidth: "100%",
+              width: "236px",
+              height: "56px",
+              background:
+                "linear-gradient(90deg, rgba(106,103,164,1) 0%, rgba(0,84,101,1) 100%)",
+              marginBottom: "2rem",
+            }}
+            onClick={(e) => {
+              handleSubmit(e, stateFromStore, files, SECRET_KEY);
+              handleNavigateToPath(RESULT);
+            }}
+            disabled={!canSubmit ? true : false}
+          >
+            Register
+          </Button>
+        </form>
+      )}
     </Box>
   );
 };

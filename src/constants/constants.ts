@@ -1,3 +1,6 @@
+export const HOME = "/";
+export const RESULT = "/result";
+
 export const initialData = {
   formData: {
     firstName: "",
